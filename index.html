@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebAR 心臟互動</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/aframe/mindar-image-aframe.prod.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      #ar-container { width: 100vw; height: 100vh; position: relative; }
+    </style>
+  </head>
+  <body>
+    <div id="ar-container">
+      <a-scene mindar-image="imageTargetSrc: target.mind; autoStart: true;" embedded color-space="sRGB"
+               renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+               device-orientation-permission-ui="enabled: true">
+        <a-assets>
+          <video id="video" src="video.mp4" preload="auto" crossorigin="anonymous"></video>
+          <audio id="sound" src="sound.mp3" preload="auto"></audio>
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+          <!-- 心臟圖片當作可點擊按鈕 -->
+          <a-plane id="heart-button" src="#video" width="1.2" height="0.675" position="0 0 0" rotation="0 0 0"
+                   material="shader: flat; src: #video;" class="clickable"></a-plane>
+
+          <!-- 說明文字 -->
+          <a-text value="心臟" position="0 0.6 0" align="center" color="#FF0000" width="2"></a-text>
+
+          <!-- 結束文字（初始隱藏） -->
+          <a-text id="end-text" value="播放結束" position="0 -0.8 0" align="center" color="#00FF00" width="2" visible="false"></a-text>
+        </a-entity>
+      </a-scene>
+    </div>
+
+    <script>
+      const video = document.querySelector('#video');
+      const sound = document.querySelector('#sound');
+      const button = document.querySelector('#heart-button');
+      const endText = document.querySelector('#end-text');
+
+      let played = false;
+
+      button.addEventListener('click', () => {
+        if (!played) {
+          video.play();
+          sound.play();
+          played = true;
+        }
+      });
+
+      video.addEventListener('ended', () => {
+        endText.setAttribute('visible', 'true');
+        button.setAttribute('visible', 'false');
+      });
+    </script>
+  </body>
+</html>
